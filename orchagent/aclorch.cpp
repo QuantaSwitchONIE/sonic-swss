@@ -1014,9 +1014,14 @@ bool AclTable::create()
         return status == SAI_STATUS_SUCCESS;
     }
 
-    attr.id = SAI_ACL_TABLE_ATTR_FIELD_ETHER_TYPE;
-    attr.value.booldata = true;
-    table_attrs.push_back(attr);
+    // IPv6 Egress is not support ETHER_TYPE
+    if ((type != ACL_TABLE_L3V6) || (stage != ACL_STAGE_EGRESS)) {
+        attr.id = SAI_ACL_TABLE_ATTR_FIELD_ETHER_TYPE;
+        attr.value.booldata = true;
+        table_attrs.push_back(attr);
+    } else {
+        SWSS_LOG_INFO("ETHER_TYPE is not supported in case of IPv6 Egress");
+    }
 
     attr.id = SAI_ACL_TABLE_ATTR_FIELD_ACL_IP_TYPE;
     attr.value.booldata = true;
